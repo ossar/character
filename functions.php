@@ -27,7 +27,8 @@ function uni_to_utf8($str)
     $hex = $regex[1];
     $dec = hexdec($hex);
     if ($dec >= 0x0000 && $dec <= 0x007F) {
-        return $hex;
+        $bin = base_convert($hex, 16, 2);
+        return sprintf('%02s', base_convert($bin, 2, 16));
     } elseif ($dec >= 0x0080 && $dec <= 0x07FF) {
         $bin = sprintf('%011s', base_convert($hex, 16, 2));
         return base_convert('110' . substr($bin, 0, 5), 2, 16)

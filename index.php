@@ -29,15 +29,29 @@ $eNum =  hexdec($m) * 65536 + (hexdec($n)+ 1) * 4096 - 1;
 table {
     border-collapse: collapse;
     font-family: monospace;
+    font-size: 14px;
     line-height: 1.2em;
-    font-size: 16px;
-}
-td, th {
-    border: 1px solid #999;
-    padding: 2px 8px;
 }
 th {
+    border: 1px solid #999;
+    padding: 2px 5px;
     background-color: #CCC;
+    font-size: 0.9em;
+    line-height: 1.2em;
+}
+td {
+    border: 1px solid #999;
+    padding: 3px 5px;
+    text-align: center;
+}
+td .char {
+    font-size: 1.4em;
+    line-height: 1.3em;
+}
+td .code {
+    font-size: 0.9em;
+    line-height: 1.2em;
+    color: #777;
 }
 </style>
 
@@ -80,20 +94,28 @@ foreach ($arr as $val) {
 <table>
 <tr>
 <th>Unicode</th>
-<th>参照</th>
-<th>UTF-8</th>
-<th>文字</th>
+<th>0</th><th>1</th><th>2</th><th>3</th>
+<th>4</th><th>5</th><th>6</th><th>7</th>
+<th>8</th><th>9</th><th>A</th><th>B</th>
+<th>C</th><th>D</th><th>E</th><th>F</th>
 </tr>
 <?php
 for($i=$sNum; $i<=$eNum; $i++) {
+    $mod = $i%16;
     $hex = sprintf('%04s', dechex($i));
     $bytes = uni_to_utf8('U+'.$hex);
-    echo '<tr>';
-    echo '<td>U+'.strtoupper($hex).'</td>';
-    echo '<td>&#x'.strtoupper($hex).'</td>';
-    echo '<td>'.$bytes.'</td>';
-    echo '<td>'.(strlen($bytes) > 1 ? hex2bin($bytes) : '').'</td>';
-    echo '</tr>';
-} 
+    if ($mod == 0) {
+        echo '<tr>';
+        echo '<td>U+'.strtoupper($hex).'</td>';
+    }
+    echo '<td>';
+    echo '<div class="char">'.($bytes === 'e0b3a3' ? 'NG' : '&#x'.strtoupper($hex)).'</div>';
+    echo '<div class="code">'.$bytes.'</div>';
+    echo '</td>'."\n";
+
+    if ($mod == 15) {
+        echo '</tr>';
+    }
+}
 ?>
 </table>
