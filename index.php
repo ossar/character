@@ -6,22 +6,30 @@ ini_set('display_errors', 'on');
 error_reporting(E_ALL);
 header('Content-type: text/html; charset=UTF-8');
 
-
-$arr = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
-// 多言語面の指定
-$m = '0';
-if (isset($_GET['m']) && in_array($_GET['m'], $arr)) {
-    $m = $_GET['m'];
+// 多言語面
+$mlPlanes = [
+    '0'  => ['BMP',    '基本多言語面',  'Basic Multilingual Plain'           ],
+    '1'  => ['SMP',    '追加多言語面',  'Supplementary Multilingual Plain'   ],
+    '2'  => ['SIP',    '追加漢字面',    'Supplementary Ideographic Plain'    ],
+    'E'  => ['SSP',    '追加特殊用途面','Supplementary Special-purpose Plain'],
+    'F'  => ['SPUA-A', '私用面-A',      'Supplementary Private Use Area-A'   ],
+    '10' => ['SPUA-B', '私用面-B',      'Supplementary Private Use Area-B'   ],
+];
+$plane = '0';
+if (isset($_GET['p']) && isset($mlPlanes[$_GET['p']])) {
+    $plane = $_GET['p'];
 }
+
 // 番号
-$n = '0';
-if (isset($_GET['n']) && in_array($_GET['n'], $arr)) {
-    $n = $_GET['n'];
+$codeNums = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+$head = '0';
+if (isset($_GET['n']) && in_array($_GET['n'], $codeNums)) {
+    $head = $_GET['n'];
 }
 
 // 開始コード、終了コード
-$sNum =  hexdec($m) * 65536 + hexdec($n) * 4096;
-$eNum =  hexdec($m) * 65536 + (hexdec($n)+ 1) * 4096 - 1;
+$sCode =  hexdec($plane) * 65536 + hexdec($head) * 4096;
+$eCode =  hexdec($plane) * 65536 + (hexdec($head)+ 1) * 4096 - 1;
 
 ?>
 
@@ -56,35 +64,31 @@ td .code {
 </style>
 
 <div>
-多言語面: 
-<select onchange="chgLang(this.value)">
+<select onchange="chgPlane(this.value)">
 <?php
-foreach ($arr as $val) {
-    $disp = $val == '0' ? '基本' : '追加'.hexdec($val);
-    if ($val == $m) {
-        echo "<option value='{$val}' selected>{$disp}</option>\n";
-    } else {
-        echo "<option value='{$val}'>{$disp}</option>\n";
-    }
+foreach ($mlPlanes as $key => $val) {
+    $slt = $key == $plane ? 'selected' : '';
+    $num = hexdec($key);
+    echo "<option value='{$key}' {$slt}>{$num}: {$val[1]} ({$val[0]})</option>\n";
 }
 ?>
 </select>
 </div>
 
 <script>
-function chgLang(m) {
-    document.location.search = '?m='+m;
+function chgPlane(p) {
+    document.location.search = '?p='+p;
 }
 </script>
 
 <div>
 |
 <?php
-foreach ($arr as $val) {
-    if ($val == $n) {
+foreach ($codeNums as $val) {
+    if ($val == $head) {
         echo "<b>{$val}</b>\n";
     } else {
-        echo "<a href='?m={$m}&n={$val}'>{$val}</a>\n";
+        echo "<a href='?p={$plane}&n={$val}'>{$val}</a>\n";
     }
     echo " | ";
 }
@@ -100,7 +104,7 @@ foreach ($arr as $val) {
 <th>C</th><th>D</th><th>E</th><th>F</th>
 </tr>
 <?php
-for($i=$sNum; $i<=$eNum; $i++) {
+for($i=$sCode; $i<=$eCode; $i++) {
     $mod = $i%16;
     $hex = sprintf('%04s', dechex($i));
     $bytes = uni_to_utf8('U+'.$hex);
@@ -112,7 +116,6 @@ for($i=$sNum; $i<=$eNum; $i++) {
     echo '<div class="char">'.($bytes === 'e0b3a3' ? 'NG' : '&#x'.strtoupper($hex)).'</div>';
     echo '<div class="code">'.$bytes.'</div>';
     echo '</td>'."\n";
-
     if ($mod == 15) {
         echo '</tr>';
     }
