@@ -57,7 +57,7 @@ echo mb_encode_numericentity('〠', [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8', true)
 echo mb_encode_numericentity('〠', [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8', false) . "\n";
 echo "=========================\n\n";
 
-$utf8Str = '1Aあ丈𠀋𝒜';
+$utf8Str = '1Aあ丈𠀋𝒜※';
 $utf8Code = bin2hex($utf8Str);
 $entityStr = mb_encode_numericentity($utf8Str, [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8', true);
 echo $utf8Str . "\n";
@@ -66,19 +66,26 @@ echo hex2bin($utf8Code) . "\n";
 echo pack('H*', $utf8Code) . "\n";
 echo $entityStr . "\n";
 
-if (preg_match_all('/&#x([0-9a-f]{1,6});/', $entityStr, $regex)) {
+if (preg_match_all('/&#x([0-9a-f]{1,6});/i', $entityStr, $regex)) {
     print_r($regex[1]);
 }
 echo "=========================\n\n";
 
 
 $codepoints = [
-    0x0031,
     0x2051,
     0x20B5,
     0x1F430,
+    0x0031,
+    0x0041,
+    0x0102,
+    0x3042,
+    0x4E08,
+    0x1D49C,
+    0x2000B,
 ];
-printf("%-10s\t%-10s\t%s\t%8s\t%8s\t%8s\t%8s\n"
+
+printf("%-10s\t%-10s\t%s\t%8s\t%8s\t%8s\t%8s\t%8s\n"
     , 'codepoint'
     , 'entity'
     , 'char'
@@ -88,14 +95,14 @@ printf("%-10s\t%-10s\t%s\t%8s\t%8s\t%8s\t%8s\n"
     , 'utf-32'
     , 'utf-32LE'
 );
-printf("%'-100s\n", '-');
+printf("%'-115s\n", '-');
 
 foreach ($codepoints as $cp) {
     $cpHex = sprintf('%04s', dechex($cp));
     $entity = "&#x{$cpHex};";
     //echo "{$entity}\n";
     $utf8Str = mb_decode_numericentity($entity, [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8');
-    printf("%-10s\t%s\t%s\t%8s\t%8s\t%8s\t%8s\n"
+    printf("%-10s\t%s\t%s\t%8s\t%8s\t%8s\t%8s\t%8s\n"
         , $cpHex
         , $entity
         , $utf8Str
