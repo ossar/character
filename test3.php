@@ -30,7 +30,7 @@ function utf8ToCp($chUtf8)
             return false;
         }
         $bin = $byte1;
-    } elseif (strlen($hexUtf8) <= 4) {
+    } elseif (strlen($hexUtf8) == 4) {
         // 2バイト文字
         $byte1 = base_convert(substr($hexUtf8, 0, 2), 16, 2);
         $byte2 = base_convert(substr($hexUtf8, 2, 2), 16, 2);
@@ -41,7 +41,7 @@ function utf8ToCp($chUtf8)
         }
         $bin = substr($byte1, 3, 5)
              . substr($byte2, 2, 6);
-    } elseif (strlen($hexUtf8) <= 6) {
+    } elseif (strlen($hexUtf8) == 6) {
         // 3バイト文字
         $byte1 = base_convert(substr($hexUtf8, 0, 2), 16, 2);
         $byte2 = base_convert(substr($hexUtf8, 2, 2), 16, 2);
@@ -55,7 +55,7 @@ function utf8ToCp($chUtf8)
         $bin = substr($byte1, 4, 4)
              . substr($byte2, 2, 6)
              . substr($byte3, 2, 6);
-    } elseif (strlen($hexUtf8) <= 8) {
+    } elseif (strlen($hexUtf8) == 8) {
         // 4バイト文字
         $byte1 = base_convert(substr($hexUtf8, 0, 2), 16, 2);
         $byte2 = base_convert(substr($hexUtf8, 2, 2), 16, 2);
