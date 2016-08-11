@@ -36,6 +36,14 @@ echo bin2hex($utf8Str)."\n";
 
 
 echo "=========================\n\n";
+// 文字を文字参照に変換する
+echo  mb_encode_numericentity('あいう', [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8', true)."\n";
+
+// // 文字参照を文字に変換する
+echo mb_decode_numericentity('&#x3042;&#x3044;&#x3046;', [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8')."\n";
+
+
+echo "=========================\n\n";
 
 $cp = 'U+1F005';
 //$cp = 'U+3042';
@@ -49,7 +57,7 @@ echo IntlChar::chr($dec)."\n";
 
 $entityStr = "&#x{$ft}; &#x1F004; &#12320; &#x2000B;";
 echo $entityStr . "\n";
-echo mb_decode_numericentity($entityStr, [0x0, 0x10ffff, 0, 0xffffff], 'UTF-8') . "\n";
+echo mb_decode_numericentity($entityStr, [0x0, 0x10ffff, 0, 0xffffff], 'iTF-8') . "\n";
 echo mb_decode_numericentity($entityStr, [0x0, 0x10ffff, 0, 0x00f230], 'UTF-8') . "\n";
 echo mb_decode_numericentity($entityStr, [0x0, 0x10ffff, 0, 0x000000], 'UTF-8') . "\n";
 
